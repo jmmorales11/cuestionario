@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica Examen DevOps</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .question {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .question h3 {
+      margin-top: 0;
+    }
+    .option {
+      display: block;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+    }
+    .option.correct {
+      background-color: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+    .option.incorrect {
+      background-color: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+    }
+    .disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <h1>Práctica para el Examen de DevOps</h1>
+  <div id="quiz"></div>
+
+  <script>
+    const preguntas = [
+  {
+    pregunta: "¿Qué es DevOps según la definición presentada en las diapositivas?",
+    opciones: [
+      "Una herramienta de automatización de despliegues.",
+      "Una metodología para mejorar la comunicación entre equipos de desarrollo y operaciones.",
+      "Un equipo separado dentro del área de TI.",
+      "Un lenguaje de programación para integración continua."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Cuál de los siguientes NO es un pilar de DevOps?",
+    opciones: [
+      "Integración Continua.",
+      "Entrega Continua.",
+      "Aprendizaje Continuo.",
+      "Desarrollo en cascada."
+    ],
+    respuesta: 3
+  },
+  {
+    pregunta: "¿Qué evento marcó el inicio del movimiento DevOps en 2008?",
+    opciones: [
+      "La publicación del libro \"The Phoenix Project\".",
+      "La conferencia Agile en Toronto donde Patrick Debois presentó la idea.",
+      "El lanzamiento de la herramienta Jenkins.",
+      "La creación del modelo CALMS."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué representa el modelo CALMS en DevOps?",
+    opciones: [
+      "Cultura, Automatización, Lean, Medición, Compartir.",
+      "Control, Automatización, Lean, Monitoreo, Seguridad.",
+      "Colaboración, Automatización, Lean, Metodología, Scrum.",
+      "Cultura, Agile, Lean, Medición, Scrum."
+    ],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué herramienta es comúnmente utilizada para la gestión de fuentes en DevOps?",
+    opciones: [
+      "Docker.",
+      "GIT.",
+      "Puppet.",
+      "Chef."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué beneficio principal ofrece la Integración Continua (CI)?",
+    opciones: [
+      "Reducción de costos de infraestructura.",
+      "Detección temprana de errores y fragmentación de esfuerzos.",
+      "Eliminación completa de pruebas manuales.",
+      "Automatización de la documentación."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué característica define a la Entrega Continua (CD)?",
+    opciones: [
+      "Despliegues manuales en entornos específicos.",
+      "Liberaciones de software cada 6 meses.",
+      "Capacidad de desplegar software en cualquier entorno en cualquier momento.",
+      "Uso exclusivo de herramientas de código cerrado."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué NO es un principio de las 'Tres Maneras' de Gene Kim?",
+    opciones: [
+      "Pensamiento de sistemas.",
+      "Amplificación de bucles de retroalimentación.",
+      "Cultura de experimentación continua.",
+      "Centralización de decisiones en un líder."
+    ],
+    respuesta: 3
+  },
+  {
+    pregunta: "¿Qué rol NO es típico en un equipo DevOps según las diapositivas?",
+    opciones: [
+      "Ingeniero de Confiabilidad.",
+      "Coordinador de Lanzamiento.",
+      "Director de Ventas.",
+      "Master de Procesos."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué enfoque recomienda DevOps para la adopción en una organización?",
+    opciones: [
+      "Implementación agresiva en toda la empresa de una vez.",
+      "Adopción incremental con objetivos pequeños y escalables.",
+      "Contratar un equipo externo especializado.",
+      "Ignorar la cultura organizacional."
+    ],
+    respuesta: 1
+  },
+  // Las siguientes preguntas continúan en el mismo formato.
+  {
+    pregunta: "¿Qué herramienta se utiliza para la gestión de configuraciones y automatización?",
+    opciones: ["Jenkins.", "Docker.", "Puppet.", "GIT."],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué concepto de Lean Manufacturing influyó en DevOps?",
+    opciones: ["Justo a Tiempo (JIT).", "Six Sigma.", "Diagramas de Gantt.", "Análisis de Pareto."],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué aspecto es clave en la cultura DevOps?",
+    opciones: ["Silos departamentales bien definidos.", "Culpar a individuos por errores.", "Experimentación y aprendizaje continuo.", "Jerarquías rígidas de toma de decisiones."],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué problema resuelve Docker en DevOps?",
+    opciones: ["Gestión de bases de datos relacionales.", "Portabilidad de aplicaciones mediante contenedores.", "Automatización de pruebas manuales.", "Monitoreo de redes."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué significa \"Sistema de Producción Toyota\" (TPS) en el contexto de DevOps?",
+    opciones: ["Un modelo para gestionar equipos remotos.", "Una metodología para reducir tiempos de flujo en producción.", "Una herramienta de integración continua.", "Un framework para desarrollo ágil."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué enfoque promueve DevOps para manejar incidentes?",
+    opciones: ["Culpar al individuo que cometió el error.", "Investigar el sistema que permitió el error.", "Ignorar incidentes menores.", "Sancionar al equipo completo."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué herramienta es utilizada para orquestar tuberías de CI/CD?",
+    opciones: ["Chef.", "Jenkins.", "Node.js.", "Kubernetes."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué NO es un beneficio de DevOps según las diapositivas?",
+    opciones: ["Reducción del tiempo de comercialización.", "Mejora en la colaboración entre equipos.", "Aumento de la burocracia.", "Detección temprana de defectos."],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué modelo de Gartner se menciona para la adopción de DevOps?",
+    opciones: ["Bimodal TI.", "ITIL v4.", "Scrum.", "Kanban."],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué práctica es esencial en el Aprendizaje Continuo de DevOps?",
+    opciones: ["Retroalimentación constante y reflexión sobre acciones.", "Limitar la comunicación entre equipos.", "Evitar la experimentación.", "Centralizar el conocimiento en un líder."],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué característica define a las entregas en DevOps?",
+    opciones: ["Grandes liberaciones anuales.", "Pequeños incrementos funcionales frecuentes.", "Documentación exhaustiva antes de codificar.", "Pruebas solo en entornos de producción."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué concepto de ITIL se integra con DevOps según las diapositivas?",
+    opciones: ["Ciclo de vida de servicios TI.", "Modelo en cascada.", "Pruebas de estrés.", "Jerarquía de incidentes."],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué herramienta se usa para crear y gestionar contenedores?",
+    opciones: ["Vagrant.", "Docker.", "Ansible.", "Terraform."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué enfoque evita DevOps según las diapositivas?",
+    opciones: ["Automatización de procesos.", "Creación de equipos separados para desarrollo y operaciones.", "Uso de retroalimentación continua.", "Implementación de integración continua."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué año se menciona como clave para la popularización de DevOpsDays?",
+    opciones: ["2006.", "2010.", "2014.", "2018."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué práctica es parte del \"System Thinking\" en DevOps?",
+    opciones: ["Aislar equipos para aumentar la productividad.", "Entender cómo las acciones afectan al sistema completo.", "Limitar la comunicación entre departamentos.", "Enfocarse solo en métricas individuales."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué no es un componente de la cultura DevOps?",
+    opciones: ["Colaboración.", "Transparencia.", "Jerarquías rígidas.", "Experimentación."],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué herramienta se menciona para pruebas y despliegues automatizados?",
+    opciones: ["GIT.", "Chef.", "Jenkins.", "Node.js."],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué concepto de Agile se integra con DevOps?",
+    opciones: ["Sprint planning.", "Entrega continua.", "Modelo en V.", "Documentación detallada."],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué métrica se beneficia con DevOps según las diapositivas?",
+    opciones: ["Tiempo de comercialización (Time-to-Market).", "Número de reuniones semanales.", "Horas de trabajo adicional.", "Cantidad de documentación generada."],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué enfoque se recomienda para la autoevaluación en DevOps?",
+    opciones: [
+      "Realizarla una vez al año.",
+      "Evitar la automatización en el proceso.",
+      "Hacerla continua e integral.",
+      "Delegarla a un equipo externo."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué no es una fase del ciclo PDCA mencionado?",
+    opciones: [
+      "Planificar.",
+      "Delegar.",
+      "Verificar.",
+      "Actuar."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué tipo de pruebas se enfatizan en Integración Continua?",
+    opciones: [
+      "Pruebas manuales aleatorias.",
+      "Pruebas automatizadas tempranas.",
+      "Pruebas de usuario final.",
+      "Pruebas de estrés anuales."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué modelo de madurez se menciona para DevOps?",
+    opciones: [
+      "CMMI.",
+      "Modelo de Gartner.",
+      "ISO 9001.",
+      "Six Sigma."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué no es un beneficio de la automatización en DevOps?",
+    opciones: [
+      "Reducción de errores humanos.",
+      "Mayor velocidad en despliegues.",
+      "Aumento de burocracia.",
+      "Consistencia en procesos."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué término describe la capacidad de desplegar software en cualquier momento?",
+    opciones: [
+      "Integración Continua.",
+      "Entrega Continua.",
+      "Desarrollo Ágil.",
+      "Monitoreo Continuo."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué herramienta se asocia con la gestión de configuraciones?",
+    opciones: [
+      "Docker.",
+      "Puppet.",
+      "Node.js.",
+      "GIT."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué no es un principio de Kaizen aplicado a DevOps?",
+    opciones: [
+      "Mejora continua.",
+      "Involucrar a todos los empleados.",
+      "Mantener procesos estáticos.",
+      "Enfocarse en el cliente."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Qué evento se considera el primer DevOpsDay?",
+    opciones: [
+      "Toronto 2008.",
+      "Ghent 2009.",
+      "San Francisco 2010.",
+      "Londres 2012."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué informe anual analiza tendencias en DevOps?",
+    opciones: [
+      "Gartner Magic Quadrant.",
+      "Reporte Puppet.",
+      "Forrester Wave.",
+      "IDC MarketScape."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "Desde una perspectiva sistémica, ¿cuál es la implicación más crítica de adoptar una práctica DevOps en una organización con arquitectura monolítica heredada?",
+    opciones: [
+      "Requiere reescribir todos los módulos en microservicios para poder aplicar integración continua.",
+      "Las dependencias cruzadas entre componentes dificultan la automatización de pruebas y la orquestación de despliegues.",
+      "Es necesario implementar Kubernetes para aislar las partes del monolito en contenedores.",
+      "El versionado semántico se vuelve innecesario al centralizar el despliegue."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Cuál sería el riesgo técnico más probable al reducir el “lead time for changes” sin fortalecer simultáneamente las prácticas de revisión de código y pruebas automatizadas?",
+    opciones: [
+      "Reducción de la capacidad de escalado horizontal.",
+      "Aumento de la tasa de fallos en producción y degradación de la confiabilidad del sistema.",
+      "Disminución del rendimiento de los entornos locales de desarrollo.",
+      "Mayor consumo de recursos en la capa de red."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "En una cadena de herramientas DevOps madura, ¿qué combinación de tecnologías se alinea mejor con el principio de 'Infrastructure as Code' y con una estrategia GitOps efectiva?",
+    opciones: [
+      "Puppet + Jenkins + MySQL",
+      "Docker + Bash Scripts + Nginx",
+      "Terraform + Git + ArgoCD",
+      "Kubernetes + Maven + FTP"
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "Si un equipo muestra altos valores de “deployment frequency” y bajos valores de “change failure rate”, ¿cuál es la inferencia más sólida sobre su madurez operativa según métricas DORA?",
+    opciones: [
+      "El equipo tiene una alta capacidad de innovación, pero poca resiliencia frente a fallos.",
+      "Se trata de un entorno con automatización superficial y débil control de calidad.",
+      "El equipo está operando en un nivel élite, maximizando estabilidad y velocidad de entrega.",
+      "La arquitectura subyacente probablemente es monolítica pero estable."
+    ],
+    respuesta: 2
+  },
+  {
+    pregunta: "¿Cuál de los siguientes enfoques sería más eficaz para reducir el 'mean time to recovery' (MTTR) sin comprometer la estabilidad de producción?",
+    opciones: [
+      "Aumentar el tamaño del equipo de operaciones para atender más incidentes.",
+      "Implementar despliegues canarios y monitoreo proactivo con alertas automáticas.",
+      "Forzar un rollback completo ante cualquier error menor detectado.",
+      "Migrar todos los servicios a una plataforma sin estado (stateless)."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Qué problema sistémico puede surgir si en un pipeline CI/CD no se controla la “deuda operativa” asociada a ambientes efímeros (ephemeral environments)?",
+    opciones: [
+      "Saturación del ancho de banda en red y lentitud en producción.",
+      "Fugas de recursos que afectan costos, disponibilidad y seguridad en entornos de staging.",
+      "Dependencias externas obsoletas que impiden despliegues en caliente.",
+      "Fallos en los test de regresión debido a inconsistencias en código fuente."
+    ],
+    respuesta: 1
+  },
+  {
+    pregunta: "¿Cuál sería una señal de que una organización aplica DevOps de forma superficial ('cargo cult') y no como transformación cultural real?",
+    opciones: [
+      "Usa contenedores y pipelines automatizados, pero los equipos siguen operando en silos funcionales.",
+      "Todos los artefactos están versionados en Git y se usa Jenkins como orquestador.",
+      "Se han migrado servicios a la nube y se usa Docker para pruebas.",
+      "Se realizan retrospectivas mensuales en cada equipo de desarrollo."
+    ],
+    respuesta: 0
+  },
+  {
+    pregunta: "Si un equipo prioriza únicamente el aumento en la frecuencia de despliegues (Deployment Frequency) sin considerar la estabilidad, ¿qué principio de las Tres Vías de Gene Kim está ignorando?",
+    opciones: [
+      "El Pensamiento Sistémico.",
+      "La Amplificación del Feedback.",
+      "El Aprendizaje y Experimentación Continua.",
+      "La Gestión de Recursos Humanos."
+    ],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Cuál es una consecuencia técnica negativa común de implementar pipelines CI/CD sin una adecuada estrategia de trazabilidad de artefactos?",
+    opciones: [
+      "Pérdida de la capacidad para reconstruir versiones anteriores y realizar análisis forense tras un incidente.",
+      "Incremento del tiempo de build debido a compilaciones paralelas.",
+      "Incompatibilidad con herramientas como GitHub Actions o CircleCI.",
+      "Imposibilidad de implementar integración continua en microservicios."
+    ],
+    respuesta: 0
+  },
+  {
+    pregunta: "¿Qué aspecto técnico-cultural distingue a DevOps de prácticas tradicionales de automatización como scripts de shell o tareas cron?",
+    opciones: [
+      "Su dependencia en lenguajes de programación funcionales.",
+      "La priorización de despliegues nocturnos automatizados.",
+      "La integración de automatización con ciclos de retroalimentación continua, colaboración interfuncional y monitoreo.",
+      "El uso exclusivo de herramientas open source."
+    ],
+    respuesta: 2
+  }
+
+];
+
+    const quiz = document.getElementById('quiz');
+
+    preguntas.forEach((item, index) => {
+      const container = document.createElement('div');
+      container.className = 'question';
+      const title = document.createElement('h3');
+      title.textContent = `${index + 1}. ${item.pregunta}`;
+      container.appendChild(title);
+
+      item.opciones.forEach((opcion, i) => {
+        const btn = document.createElement('div');
+        btn.className = 'option';
+        btn.textContent = opcion;
+        btn.addEventListener('click', () => {
+          if (i === item.respuesta) {
+            btn.classList.add('correct');
+          } else {
+            btn.classList.add('incorrect');
+          }
+          Array.from(container.getElementsByClassName('option')).forEach(opt => {
+            opt.classList.add('disabled');
+            if (opt.textContent === item.opciones[item.respuesta]) {
+              opt.classList.add('correct');
+            }
+          });
+        });
+        container.appendChild(btn);
+      });
+
+      quiz.appendChild(container);
+    });
+  </script>
+</body>
+</html>
